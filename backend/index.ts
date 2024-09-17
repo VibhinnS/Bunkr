@@ -1,5 +1,7 @@
-import express, {Express, Request, Response} from "express"
+import express, {Express, Request, response, Response} from "express"
 import cors from "cors";
+import { signin } from "./database";
+import { ISignInPayload } from "./interfaces";
 import fetch from "cross-fetch";
 
 let app: Express = express();
@@ -12,27 +14,39 @@ app.get('/', (req: Request, res: Response) => {
     })
 })
 
-app.post('/signin', async (req: Request, res: Response) => {
-    try {
-        const response = await fetch('http://localhost:8000/api/sign-in', {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body:JSON.stringify( {
-                username: req.body.username,
-                email: req.body.email,
-                password: req.body.password,
-            }),
-        });
+app.post('/signup', async (req: Request, res: Response) => {
+    const signInPayload: ISignInPayload = req.body;
+    const payloadParse = signin.safeParse(signInPayload);
 
-        const data = await response.json(); 
-        console.log(data);
-        res.status(response.status).json(data);
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+    if (!payloadParse.success) {
+        res.status(404).json({
+            msg: "Couldn't sign in. Provided credentials are incorrect!"
+        })
+    } else {
+        try {
+            const response = await fetch('http://localhost:8000/api/sign-up/', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: req.body.password,
+                }),
+            });
+    
+            const data = await response.json();
+            if (response.status === 201) {
+                res.json({
+                    status: 201,
+                    msg: "User created successfully!"
+                })
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
 });
 

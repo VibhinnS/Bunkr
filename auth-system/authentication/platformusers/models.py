@@ -13,6 +13,5 @@ class User(models.Model):
         self.password = make_password(raw_password)
         self.save()
 
-    def check_password(self, raw_password):
+    def check_password_correct_or_not(self, raw_password):
         return check_password(raw_password, self.password)
-

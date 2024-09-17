@@ -1,9 +1,14 @@
 import zod from "zod"
 
-const signin = zod.object({
+const signup = zod.object({
     username: zod.string(),
     email: zod.string(),
     password: zod.string()
 })
 
-export { signin }
+const signin = zod.object({
+    username: zod.string(),
+    password: zod.string()
+})
+
+export { signin, signup }

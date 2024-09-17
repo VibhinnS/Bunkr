@@ -1,7 +1,7 @@
 import express, {Express, Request, response, Response} from "express"
 import cors from "cors";
-import { signin } from "./database";
-import { ISignInPayload } from "./interfaces";
+import { signup, signin } from "./database";
+import { ISignUpPayload, ISignInPayload } from "./interfaces";
 import fetch from "cross-fetch";
 
 let app: Express = express();
@@ -15,12 +15,12 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.post('/signup', async (req: Request, res: Response) => {
-    const signInPayload: ISignInPayload = req.body;
-    const payloadParse = signin.safeParse(signInPayload);
+    const signUpPayload: ISignUpPayload = req.body;
+    const parsedPayload = signup.safeParse(signUpPayload);
 
-    if (!payloadParse.success) {
+    if (!parsedPayload.success) {
         res.status(404).json({
-            msg: "Couldn't sign in. Provided credentials are incorrect!"
+            msg: "Couldn't sign in. Incorrect details provided!"
         })
     } else {
         try {
@@ -36,7 +36,6 @@ app.post('/signup', async (req: Request, res: Response) => {
                 }),
             });
     
-            const data = await response.json();
             if (response.status === 201) {
                 res.json({
                     status: 201,
@@ -52,11 +51,47 @@ app.post('/signup', async (req: Request, res: Response) => {
 
 
 
+app.post('/signin', async (req: Request, res: Response) => {
+    const signInPayload: ISignInPayload = req.body;
+    const parsedPayload = signin.safeParse(signInPayload);
 
+    if (!parsedPayload.success) {
+        return res.status(400).json({
+            msg: "Couldn't sign in. Provided credentials are incorrect!",
+            errors: parsedPayload.error.errors
+        });
+    }
 
+    try {
+        const response = await fetch('http://localhost:8000/api/login/', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: req.body.username,
+                password: req.body.password,
+            }),
+        });
 
-
-
+        if (response.ok) {
+            res.json({
+                status: 200,
+                msg: "Logged In Successfully!"
+            });
+        } else {
+            // Handle API error responses
+            const errorData = await response.json();
+            res.status(response.status).json({
+                msg: "Failed to log in.",
+                error: errorData
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 

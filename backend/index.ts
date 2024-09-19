@@ -1,7 +1,7 @@
 import express, {Express, Request, response, Response} from "express"
 import cors from "cors";
-import { signup, signin } from "./database";
-import { ISignUpPayload, ISignInPayload } from "./interfaces";
+import { signup, signin, forgotPassword } from "./database";
+import { ISignUpPayload, ISignInPayload, IForgotPasswordPayload } from "./interfaces";
 import fetch from "cross-fetch";
 
 let app: Express = express();
@@ -55,7 +55,6 @@ app.post('/signin', async (req: Request, res: Response) => {
     const signInPayload: ISignInPayload = req.body;
     const parsedPayload = signin.safeParse(signInPayload);
 
-    console.log(parsedPayload);
 
     if (!parsedPayload.success) {
         return res.status(400).json({
@@ -86,6 +85,48 @@ app.post('/signin', async (req: Request, res: Response) => {
             const errorData = await response.json();
             res.status(response.status).json({
                 msg: "Failed to log in.",
+                error: errorData
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.post('/forgot-password', async (req: Request, res: Response) => {
+    const forgotPasswordPayload: IForgotPasswordPayload  = req.body;
+    const parsedPayload = forgotPassword.safeParse(forgotPasswordPayload);
+
+
+    if (!parsedPayload.success) {
+        return res.status(400).json({
+            msg: "Pleae provide correct new password to set up!",
+            errors: parsedPayload.error.errors
+        });
+    }
+
+    try {
+        const response = await fetch('http://localhost:8000/api/forgot-password/', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: req.body.username,
+                new_password: req.body.new_password,
+            }),
+        });
+
+        if (response.ok) {
+            res.json({
+                status: 200,
+                msg: "Password changed Successfully!"
+            });
+        } else {
+            const errorData = await response.json();
+            res.status(response.status).json({
+                msg: "New password is invalid.",
                 error: errorData
             });
         }

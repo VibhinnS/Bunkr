@@ -8,3 +8,8 @@ export interface ISignInPayload {
     username: string,
     password: string
 }
+
+export interface IForgotPasswordPayload {
+    username: string,
+    password: string
+}

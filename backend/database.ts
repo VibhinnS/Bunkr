@@ -11,4 +11,9 @@ const signin = zod.object({
     password: zod.string()
 })
 
-export { signin, signup }
+const forgotPassword = zod.object({
+    username: zod.string(),
+    new_password: zod.string()
+})
+
+export { signin, signup, forgotPassword }

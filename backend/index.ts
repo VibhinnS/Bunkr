@@ -55,6 +55,8 @@ app.post('/signin', async (req: Request, res: Response) => {
     const signInPayload: ISignInPayload = req.body;
     const parsedPayload = signin.safeParse(signInPayload);
 
+    console.log(parsedPayload);
+
     if (!parsedPayload.success) {
         return res.status(400).json({
             msg: "Couldn't sign in. Provided credentials are incorrect!",

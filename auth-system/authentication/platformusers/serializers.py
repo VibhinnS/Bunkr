@@ -1,24 +1,26 @@
+# authapp/serializers.py
+from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import User
 
-class UserSerializer(serializers.ModelSerializer):
+class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['username', 'password', 'email']
 
     def create(self, validated_data):
-        user = User(
+        user = User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data['email']
+            email=validated_data['email'],
+            password=validated_data['password']
         )
-        user.set_password(validated_data['password'])
-        user.save()
         return user
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField()
+
 
 class ForgotPasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    username = serializers.CharField()
+    new_password = serializers.CharField()

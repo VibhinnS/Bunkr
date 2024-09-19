@@ -1,0 +1,1 @@
+Has the logic of auth - making API calls and receiving status message

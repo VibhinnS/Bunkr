@@ -1,0 +1,1 @@
+All the routes for the auth service and other ends

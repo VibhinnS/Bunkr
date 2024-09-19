@@ -136,6 +136,4 @@ app.post('/forgot-password', async (req: Request, res: Response) => {
     }
 });
 
-
-
 app.listen(3000)

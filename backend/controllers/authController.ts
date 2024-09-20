@@ -30,3 +30,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+export const posts = (): null => {
+    return null;
+}

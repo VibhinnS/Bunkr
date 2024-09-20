@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { signup, signin, forgotPassword } from '../utils/database';
+import PayloadType from '../utils/payloadTypes';
 
-const validatePayload = (type: 'signup' | 'signin' | 'forgotPassword') => {
+const validatePayload = (type: PayloadType) => {
     return (req: Request, res: Response, next: NextFunction) => {
         let parsedPayload;
 
@@ -15,6 +16,8 @@ const validatePayload = (type: 'signup' | 'signin' | 'forgotPassword') => {
             case 'forgotPassword':
                 parsedPayload = forgotPassword.safeParse(req.body);
                 break;
+            case 'posts':
+
         }
 
         if (!parsedPayload.success) {

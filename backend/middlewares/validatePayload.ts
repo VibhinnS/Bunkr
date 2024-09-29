@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { signup, signin, forgotPassword } from '../utils/database';
-import PayloadType from '../utils/payloadTypes';
+import {PayloadType} from '../utils/payloadTypes';
 
 const validatePayload = (type: PayloadType) => {
     return (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,7 @@
 import fetch from 'cross-fetch';
+import { SignUpPayload, SignInPayload, ForgotPasswordPayload } from '../utils/payloadTypes';
 
-export const signUpService = async (payload: any) => {
+export const signUpService = async (payload: SignUpPayload) => {
     const response = await fetch(`${process.env.AUTH_API_URL}/sign-up/`, {
         method: 'POST',
         headers: {
@@ -17,7 +18,7 @@ export const signUpService = async (payload: any) => {
     }
 };
 
-export const signInService = async (payload: any) => {
+export const signInService = async (payload: SignInPayload) => {
     const response = await fetch(`${process.env.AUTH_API_URL}/login/`, {
         method: 'POST',
         headers: {
@@ -34,7 +35,7 @@ export const signInService = async (payload: any) => {
     }
 };
 
-export const forgotPasswordService = async (payload: any) => {
+export const forgotPasswordService = async (payload: ForgotPasswordPayload) => {
     const response = await fetch(`${process.env.AUTH_API_URL}/forgot-password/`, {
         method: 'PUT',
         headers: {
